@@ -37,17 +37,23 @@ else
 fi
 
 ################ CHECKS AND PRINTS THE DIFFERENCES ################
-header_padding="                         "  # 25 spaces
+padding="                         "  # 25 spaces
+
 first_file_name="FIRST FILE"
 first_file_name_half_characters=$(( ${#first_file_name} / 2))
+
 second_file_name="SECOND FILE"
 second_file_name_half_characters=$(( ${#second_file_name} / 2))
 
+header="|${padding:${#first_file_name_half_characters}}${first_file_name}${padding:${#first_file_name_half_characters}}|${padding:${#second_file_name_half_characters}}${second_file_name}${padding:${#second_file_name_half_characters}}|"
 
-echo "|${header_padding:${#first_file_name_half_characters}}${first_file_name}${header_padding:${#first_file_name_half_characters}}|${header_padding:${#second_file_name_half_characters}}${second_file_name}${header_padding:${#second_file_name_half_characters}}|"
+echo "$header"
+
 for ((i=0; i<${iterationLimit}; i++))
 do
 	if [[ ( ${#first_file_lines[i]} -gt 0 || ${#second_file_lines[i]} -gt 0 ) && first_file_lines[i] != second_file_lines[i] ]]; then
-		echo "line $i:${first_file_lines[i]} | line $i: ${second_file_lines[i]}"
+		line_default_chars=" $i: "
+		line="|${line_default_chars}${first_file_lines[i]}${padding:${#line_default_chars}+${#first_file_lines[i]}}${padding}|${line_default_chars}${second_file_lines[i]}${padding:${#line_default_chars}+${#second_file_lines[i]}}${padding}|"
+		echo "$line"
 	fi
 done
