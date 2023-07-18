@@ -2,58 +2,91 @@
 
 set -e
 
-
-################ CHECKS IF THE PATHS ARE VALID FILE PATHS ################
-if [ -f $1 ]; then
-	first_file_path=$1
+# Check if the both input file exist
+if test -f "$1"
+then
+	file_src=$1
 else
-	echo "Missing first file path"
-	exit 0
+	echo "Missing original file path"
+	exit 1
 fi
 
-if [ -f $2 ]; then
-	second_file_path=$2
+if test -f "$2"
+then
+	file_changed=$2
 else
-	echo "Missing second file path"
-	exit 0
+	echo "Missing changed file path"
+	exit 1
 fi
 
-################ ASSIGNS THE CONTENT AS SPLIT IN LINES TO ARRAYS ################ 
-first_file_lines=()
-while IFS= read -r line; do
-	first_file_lines+=("$line")
-done < "$first_file_path"
+# Load the files contents as lines
+file_src_lines=()
+file_changed_lines=()
 
-second_file_lines=()
-while IFS= read -r line; do
-        second_file_lines+=("$line")
-done < "$second_file_path"	
-
-################ VERIFY WHAT FILE HAS MORE LINES AND USES THE BIGGER AS A LIMIT TO THE ITERATION OPERATION ################
-if [ ${#first_file_lines[@]} -gt ${#second_file_lines[@]} ]; then
-	iterationLimit=${#first_file_lines}
-else
-	iterationLimit=${#second_file_lines}
-fi
-
-################ CHECKS AND PRINTS THE DIFFERENCES ################
-padding="                         "  # 25 spaces
-
-first_file_name="FIRST FILE"
-first_file_name_half_characters=$(( ${#first_file_name} / 2))
-
-second_file_name="SECOND FILE"
-second_file_name_half_characters=$(( ${#second_file_name} / 2))
-
-header="|${padding:${#first_file_name_half_characters}}${first_file_name}${padding:${#first_file_name_half_characters}}|${padding:${#second_file_name_half_characters}}${second_file_name}${padding:${#second_file_name_half_characters}}|"
-
-echo "$header"
-
-for ((i=0; i<${iterationLimit}; i++))
+while IFS= read -r line;
 do
-	if [[ ( ${#first_file_lines[i]} -gt 0 || ${#second_file_lines[i]} -gt 0 ) && first_file_lines[i] != second_file_lines[i] ]]; then
-		line_default_chars=" $i: "
-		line="|${line_default_chars}${first_file_lines[i]}${padding:${#line_default_chars}+${#first_file_lines[i]}}${padding}|${line_default_chars}${second_file_lines[i]}${padding:${#line_default_chars}+${#second_file_lines[i]}}${padding}|"
-		echo "$line"
+	file_src_lines+=("$line")
+done < "$file_src"
+
+while IFS= read -r line;
+do
+	file_changed_lines+=("$line")
+done < "$file_changed"
+
+# Check the size of both sizes, assign the greater one to the iteration_max variable
+declare -i iteration_max=0
+
+if (( ${#file_src_lines} -gt ${#file_changed_lines} ));
+then
+	iteration_max=${#file_src_lines}
+else
+	iteration_max=${#file_changed_lines}
+fi
+
+# Check if the lines are equal, assign 1 to the array if TRUE, if FALSE assign 0.
+declare isDiff
+
+for((i=0; i < $iteration_max; i++))
+do
+	if test "${file_src_lines[i]}" = "${file_changed_lines[i]}";
+	then
+		isDiff[i]=0
+	else
+		isDiff[i]=1
+	fi
+done
+
+# Print the file showing the difference
+header=">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CHANGES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+footer=">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+
+for((i=0; i < $iteration_max; i++))
+do
+	# If is equal, echo the line
+	if [ ${isDiff[i]} = "0" ]; then
+		echo "${file_src_lines[i]}"
+
+	# If is different ...
+        elif [ "${isDiff[i]}" == "1" ]; then
+
+		# ... if it's the first line, echo the header and the line 
+		if [ ${i} == "0" ]; then
+			echo "$header"
+			echo "${file_changed_lines[i]}"
+
+		# ... If it's the first line, and the previous one is equal. Echo the header, and the line
+		elif [ ${i} != "0" ] && [ "${isDiff[i-1]}" == "0" ]; then
+                        echo "$header"
+                        echo "${file_changed_lines[i]}"
+
+		# ... If it's not the first line, and the previous one is different, only echo the line
+		elif [ ${i} != "0" ] && [ "${isDiff[i-1]}" == "1" ]; then
+	                echo "${file_changed_lines[i]}"
+		fi		
+
+                # ... If it's not the last line and the next one is equal, echo the footer. 
+                if [ "$i" != "$iteration_max" ] && [ "${isDiff[i+1]}" == "0" ]; then
+                        echo "$footer"
+                fi
 	fi
 done
