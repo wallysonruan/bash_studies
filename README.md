@@ -1,14 +1,23 @@
-# Gilded Rose Refactoring Kata
+# Bash Studies
 
-Hi and welcome to team Gilded Rose. As you know, we are a small inn with a
-prime location in a prominent city ran by a friendly innkeeper named
-Allison. We also buy and sell only the finest goods. Unfortunately, our
-goods are constantly degrading in quality as they approach their sell by
-date. We have a system in place that updates our inventory for us. It was
-developed by a no-nonsense type named Leeroy, who has moved on to new
-adventures. Your task is to add the new feature to our system so that we
-can begin selling a new category of items. First an introduction to our system:
+In my last project I had to use Ubuntu:20.04, and I needed to use Bash for a couple tasks. That showed me how important it's to really understand and know Bash, So I created this repository to store all Bash scripts I'll write during my studies.
 
-Just for clarification, an item can never have its Quality increase
-above 50, however "Sulfuras" is a legendary item and as such its
-Quality is 80 and it never alters.
+## Scripts
+
+1. File Comparator
+I found this [10 Bash Script Code Challenges for Beginners](https://codecademy.com/resources/blog/bash-script-code-challenges-for-beginners/) list of challenges, and I liked the first one. While I was writing it, I noticed I could do something more exciting, such as a file comparator similar to the one GitHub has.
+
+**How to use it?**
+
+Execute the command below, it will output the updated file highlighting the changes.
+
+'''
+bash compare_files.sh <original file path> <updated file path>
+'''
+
+**How does it works?**
+- Check if both are valid file paths, if not, abort the operation.
+- Load both file contents as lines.
+- Check what is the highest amount of lines.
+- Go over the updated file, and compare each of its lines to their correspondent one in the original file - using their index.
+- Prints an "diff header" before the new line if its not the first line, or if the previous line is not a diff one too. 
