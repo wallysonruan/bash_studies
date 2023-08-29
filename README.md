@@ -4,10 +4,10 @@ In my last project I had to use Ubuntu:20.04, and I needed to use Bash for a cou
 
 P.S.: I strongly advise the use of alias. I use the code below to get the most of the scripts.
 
-'''
+```
 alias remove-i="bash <path>/<to>/remove_all_containers_images.sh"
 alias remove-c="bash <path>/<to>/remove_all_containers.sh"
-'''
+```
 
 ## Scripts
 
@@ -18,9 +18,9 @@ I found this [10 Bash Script Code Challenges for Beginners](https://codecademy.c
 
 Execute the command below, it will output the updated file highlighting the changes.
 
-'''
+```
 bash compare_files.sh <original file path> <updated file path>
-'''
+```
 
 #### How does it works?
 - Check if both are valid file paths, if not, abort the operation.
@@ -34,9 +34,9 @@ bash compare_files.sh <original file path> <updated file path>
 
 Go to the scripts path and execute the command below, it will output the deleted containers id.
 
-'''
+```
 bash <script-name>
-'''
+```
 
 #### How does it works?
 - Uses docker cli commands to get the list of the current containers or images
